@@ -1,19 +1,24 @@
-import re
-
 # A rock, B = Paper, C = Scissors
 # X = rock, Y = Paper, Z = Scissors
-A, B, C = 1, 2, 3
-BEATS = {A: C, B: A, C: B}
-LOSES = {v: k for k, v in BEATS.items()}
+ROCK, PAPER, SCISSORS = 1, 2, 3
+
+WINS = {ROCK: SCISSORS, PAPER: ROCK, SCISSORS: PAPER}
+LOSES = {v: k for k, v in WINS.items()}
 
 
 def parse_input(file):
     result = []
     with open(file) as in_file:
-        for line in in_file:
-            splitted = re.split(r"\s", line)
-            result.append((splitted[0], splitted[1]))
+        result.extend(tuple(line.strip().split()) for line in in_file)
     return result
+
+
+def match_result(elf, you):
+    if WINS[you] == elf:
+        return 6
+    elif elf == you:
+        return 3
+    return 0
 
 
 def part_one(strategy):
@@ -21,13 +26,9 @@ def part_one(strategy):
     for elf, you in strategy:
         _elf = ord(elf) - ord("@")
         _you = ord(you) - ord("@") - (ord("X") - ord("A"))
-        if _elf == _you:
-            score += 3 + _you
-        elif BEATS[_you] == _elf:
-            score += 6 + _you
-        else:
-            score += 0 + _you
-    print(score)
+        score += _you + match_result(_elf, _you)
+
+    return score
 
 
 def part_two(strategy):
@@ -35,16 +36,16 @@ def part_two(strategy):
     for elf, you in strategy:
         _elf = ord(elf) - ord("@")
         if you == "X":
-            score += 0 + BEATS[_elf]
+            score += 0 + WINS[_elf]
         elif you == "Y":
             score += 3 + _elf
         else:
             score += 6 + LOSES[_elf]
 
-    print(score)
+    return score
 
 
 if __name__ == "__main__":
     strategy = parse_input("input.txt")
-    part_one(strategy)
-    part_two(strategy)
+    print(f"Part 1: {part_one(strategy)}")
+    print(f"Part 2: {part_two(strategy)}")
