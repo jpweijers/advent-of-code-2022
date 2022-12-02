@@ -1,45 +1,50 @@
+import re
+
 # A rock, B = Paper, C = Scissors
 # X = rock, Y = Paper, Z = Scissors
 A, B, C = 1, 2, 3
 BEATS = {A: C, B: A, C: B}
-LOSES = {v:k for k, v in BEATS.items()}
+LOSES = {v: k for k, v in BEATS.items()}
 
-def part_one():
+
+def parse_input(file):
+    result = []
+    with open(file) as in_file:
+        for line in in_file:
+            splitted = re.split(r"\s", line)
+            result.append((splitted[0], splitted[1]))
+    return result
+
+
+def part_one(strategy):
     score = 0
-    with open("input.txt") as infile:
-        for line in infile:
-            elf = ord(line.split()[0]) - 64
-            you = ord(line.split()[1]) - 87
-            if you == elf:
-                score += 3
-                score += you
-            elif BEATS[you] == elf:
-                score += you
-                score += 6
-            else:
-                score += you
+    for elf, you in strategy:
+        _elf = ord(elf) - ord("@")
+        _you = ord(you) - ord("@") - (ord("X") - ord("A"))
+        if _elf == _you:
+            score += 3 + _you
+        elif BEATS[_you] == _elf:
+            score += 6 + _you
+        else:
+            score += 0 + _you
+    print(score)
 
-        print(score)
 
-def part_two():
+def part_two(strategy):
     score = 0
-    with open("input.txt") as infile:
-        # X = lose, Y = draw, Z = win
-        for line in infile:
-            elf = ord(line.split()[0]) - 64
-            you = line.split()[1]
-            if "X" in you:
-                pick = BEATS[elf]
-                score += 0 + pick
-            elif "Y" in you:
-                pick = elf
-                score += 3 + pick
-            else:
-                pick = LOSES[elf]
-                score += 6 + pick
+    for elf, you in strategy:
+        _elf = ord(elf) - ord("@")
+        if you == "X":
+            score += 0 + BEATS[_elf]
+        elif you == "Y":
+            score += 3 + _elf
+        else:
+            score += 6 + LOSES[_elf]
 
-        print(score)
-            
+    print(score)
+
+
 if __name__ == "__main__":
-    part_one()
-    part_two()
+    strategy = parse_input("input.txt")
+    part_one(strategy)
+    part_two(strategy)
