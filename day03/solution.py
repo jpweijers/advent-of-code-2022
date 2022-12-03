@@ -1,3 +1,6 @@
+from timeit import timeit
+
+
 def parse_input(file):
     result = []
     with open(file) as rucksacks:
@@ -29,6 +32,14 @@ def part_1(rucksacks):
     return result
 
 
+def part_1_intersection(rucksacks):
+    result = 0
+    for comp1, comp2 in rucksacks:
+        common = set(comp1).intersection(set(comp2))
+        result += score_map[common.pop()]
+    return result
+
+
 def part_2(rucksacks):
     rucksack_groups = []
     for i in range(0, len(rucksacks), 3):
@@ -46,4 +57,10 @@ def part_2(rucksacks):
 if __name__ == "__main__":
     rucksacks = parse_input("input.txt")
     print(f"Part 1: {part_1(rucksacks)}")
+    print(f"Part 1: {part_1_intersection(rucksacks)}")
     print(f"Part 2: {part_2(rucksacks)}")
+
+    p1 = timeit("part_1(rucksacks)", number=10000, globals=globals())
+    p1_fast = timeit("part_1_intersection(rucksacks)", number=10000, globals=globals())
+    print(f"nested loop x 10.000 in: {p1} seconds")
+    print(f"intersection x 10.000 in: {p1_fast} seconds")
