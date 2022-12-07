@@ -17,8 +17,7 @@ class Node(NodeMixin):
 
 
 def parse_input():
-    root = Node("/", 0)
-    cwd = Node("/", 0, root)
+    root = cwd = Node("/", 0)
     with open("input.txt") as in_file:
         for line in in_file:
             line = line.strip()
@@ -32,7 +31,7 @@ def parse_input():
                 size = line.split()[0]
                 cwd.size += int(size)
 
-    return root
+    return root.children[0]
 
 
 def write_tree(node):
