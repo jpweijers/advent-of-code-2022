@@ -12,8 +12,11 @@ class Node(NodeMixin):
         if children:
             self.children = children
 
+    def get_size(self):
+        return self.size + sum(child.get_size() for child in self.children)
+
     def __repr__(self):
-        return f"{self.name} - {self.size}"
+        return f"{self.name} - {self.get_size()}"
 
 
 def parse_input():
@@ -39,33 +42,25 @@ def write_tree(node):
         write_file.write(RenderTree(node, style=AsciiStyle()).__str__())
 
 
-def size(node):
-    if not node.children:
-        return node.size
-    for child in node.children:
-        node.size += size(child)
-    return node.size
-
-
 def part_one(root):
-    return sum(node.size for node in PostOrderIter(root) if node.size < 100_000)
+    return sum(
+        node.get_size() for node in PostOrderIter(root) if node.get_size() < 100_000
+    )
 
 
-def part_two(_dir, target: int):
+def part_two(_dir):
     result = float("inf")
-    sizes = [node.size for node in PostOrderIter(root)]
+    target = _dir.get_size() - 40_000_000
+    sizes = [node.get_size() for node in PostOrderIter(root)]
     for size in sizes:
         if size >= target:
             result = min(size, result)
-
     return result
 
 
 if __name__ == "__main__":
     root = parse_input()
-    s = size(root)
     write_tree(root)
 
     print(f"part 1: {part_one(root)}")
-    target = s - (70_000_000 - 30_000_000)
-    print(f"part 2: {part_two(root, target)}")
+    print(f"part 2: {part_two(root)}")
