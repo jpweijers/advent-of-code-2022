@@ -58,20 +58,24 @@ def part_one(moves):
 
 
 def part_two(moves):
+    # array of rope knots: [Head, 1...8, Tail]
     knots = [Position(0, 0) for _ in range(10)]
-    t_visited = set()
+    tail_visited = set()
     for move in moves:
         direction = move[0]
         steps = int(move[1])
         while steps > 0:
+            # Move the Head
             knots[0].move(direction)
+            # Move rest of knots
             for i in range(1, 10):
                 if not knots[i].touches(knots[i - 1]):
                     knots[i].close_gap(knots[i - 1])
-                if i == 9 and str(knots[i] not in t_visited):
-                    t_visited.add(str(knots[i]))
+                if i == 9 and str(knots[i] not in tail_visited):
+                    # new Tail position visited
+                    tail_visited.add(str(knots[i]))
             steps -= 1
-    return len(t_visited)
+    return len(tail_visited)
 
 
 if __name__ == "__main__":
