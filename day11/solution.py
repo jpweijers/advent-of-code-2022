@@ -1,8 +1,3 @@
-import sys
-
-# sys.set_int_max_str_digits(10000000)
-
-
 class Monkey:
     def __init__(self, items, operation, test, recipients):
         self.inspections = 0
@@ -14,9 +9,6 @@ class Monkey:
     def operate(self, num):
         r = self.operation
         return eval(r.replace("old", str(num)))
-
-    def operate2(self, num):
-        return num if "*" in self.operation else self.operate(num)
 
     def total(self):
         return sum(self.items)
@@ -30,12 +22,16 @@ def read_input():
     with open("input.txt") as f:
         for line in f:
             line = line.strip()
+
             if line.startswith("Monkey"):
-                monkey = monkeys.append(Monkey([], 0, 0, []))
+                monkeys.append(Monkey([], 0, 0, []))
+
             if line.startswith("Starting items: "):
                 monkeys[-1].items = [int(x) for x in line.split(":")[1].split(", ")]
+
             if line.startswith("Operation: "):
                 monkeys[-1].operation = line.split("= ")[1]
+
             if line.startswith("Test: "):
                 monkeys[-1].test = int(line.split("Test: divisible by ")[1])
 
