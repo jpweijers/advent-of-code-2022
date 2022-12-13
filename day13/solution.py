@@ -81,6 +81,24 @@ def part_one(pairs):
     return result
 
 
+def part_two(pairs):
+    key_2 = Element(2)
+    key_6 = Element(6)
+    elements = [key_2, key_6]
+    for pair in pairs:
+        left, right = map(Element, pair)
+        elements.append(left)
+        elements.append(right)
+    
+    _sorted = sorted(elements)
+        
+    id_2 = _sorted.index(key_2) + 1
+    id_6 = _sorted.index(key_6) + 1
+    
+    return id_2 * id_6
+
+
 if __name__ == "__main__":
     pairs = parse_input()
     print(f"Part one: {part_one(pairs)}")
+    print(f"Part two: {part_two(pairs)}")
