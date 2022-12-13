@@ -65,8 +65,8 @@ def part_two():
     monkeys = read_input()
 
     modulo = 1
-    for monkey in monkeys:
-        modulo *= monkey.test
+    for m in monkeys:
+        modulo *= m.test
 
     for _ in range(10000):
         for monkey in monkeys:
@@ -85,5 +85,5 @@ def part_two():
 
 
 if __name__ == "__main__":
-    print(f"Part one: {part_one()}")
-    print(f"Part two: {part_two()}")
+    print(f"Part one: {part_one()}")  # 120384
+    print(f"Part two: {part_two()}")  # 32059801242
