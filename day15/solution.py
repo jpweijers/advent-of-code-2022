@@ -29,7 +29,7 @@ def parse_input():
 
 
 def part_one(sensors):
-    # positions without beacon in row y=2000
+    # positions without beacon in row y=2000000
     # (total cols) - (beacons in row y=2000000)
 
     lx = float("inf")
@@ -50,7 +50,29 @@ def part_one(sensors):
 
 
 def part_two(sensors):
-    pass
+    # positions of distress beacon x * 4_000_000 + y
+    # the distress beacon is not in range of any sensor
+    # the distres beacon is between x=0 and x=4_000_000 and y=0 and y=4_000_000
+    for i in range(4_000_000 + 1):
+        intervals = []
+        for sensor in sensors:
+            distance = abs(sensor.x - sensor.beacon.x) + abs(sensor.y - sensor.beacon.y)
+            offset = distance - abs(sensor.y - i)
+
+            lx = sensor.x - offset
+            hx = sensor.x + offset
+
+            intervals.append((lx, hx))
+
+        intervals.sort()
+
+        x = 0
+        for lo, hi in intervals:
+            if x < lo:
+                return x * 4_000_000 + i
+            x = max(x, hi + 1)
+            if x > 4_000_000:
+                break
 
 
 if __name__ == "__main__":
