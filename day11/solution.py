@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Monkey:
     def __init__(self, items, operation, test, recipients):
         self.inspections = 0
