@@ -1,10 +1,10 @@
 from collections import defaultdict
-from itertools import product
+from itertools import product, combinations
 
 
 def parse_input(file_name):
     rates = {}
-    graph = {}
+    graph = defaultdict(list)
 
     with open(file_name) as f:
         for field in map(str.split, f):
@@ -13,7 +13,9 @@ def parse_input(file_name):
             neighbors = list(map(lambda x: x.rstrip(","), field[9:]))
 
             rates[name] = flow_rate
-            graph[name] = neighbors
+
+            for n in neighbors:
+                graph[name].append(n)
 
     return rates, graph
 
@@ -41,7 +43,9 @@ def floyd_warshall(graph):
     return distances
 
 
-def dfs(distances, rates, valves, time=30, cur="AA", chosen: dict = {}):
+def dfs(distances, rates, valves, time=30, cur="AA", chosen: dict = None):
+    if chosen is None:
+        chosen = {}
 
     for nxt in valves:
         new_time = time - (distances[cur][nxt] + 1)
@@ -57,21 +61,33 @@ def dfs(distances, rates, valves, time=30, cur="AA", chosen: dict = {}):
 def part_one():
     rates, graph = parse_input("input.txt")
     distances = floyd_warshall(graph)
-    valves = set(graph.keys())
 
-    result = 0
     non_zero_valves = set(filter(rates.get, graph.keys()))
 
-    for choice in dfs(distances, rates, non_zero_valves):
-        result = max(result, score(rates, choice))
-
-    return result
+    return max(score(rates, c) for c in dfs(distances, rates, non_zero_valves))
 
 
 def part_two():
     rates, graph = parse_input("input.txt")
+    distances = floyd_warshall(graph)
 
-    return None
+    good = set(filter(rates.get, graph.keys()))
+
+    maxscore = defaultdict(int)
+
+    for solution in dfs(distances, rates, good, 26):
+        k = frozenset(solution)
+        s = score(rates, solution)
+        if s > maxscore[k]:
+            maxscore[k] = s
+
+    best = 0
+    for (k1, score1), (k2, score2) in combinations(maxscore.items(), 2):
+        if len(k1 & k2) != 0:
+            continue
+        best = max(best, (maxscore[k1] + maxscore[k2]))
+
+    return best
 
 
 if __name__ == "__main__":
